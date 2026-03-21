@@ -95,6 +95,11 @@ export function renderCalendarView(container, options = {}) {
     byDate[d].sort((a, b) => (b.priority_score || 0) - (a.priority_score || 0));
   }
 
+  // ── Shared wrapper so header + grid share one border and identical width ─────
+  const calWrap = document.createElement('div');
+  calWrap.className = 'cal-wrap';
+  container.appendChild(calWrap);
+
   // ── Day-name header row ───────────────────────────────────────────────────────
   const dayNames = document.createElement('div');
   dayNames.className = 'cal-day-names';
@@ -104,12 +109,12 @@ export function renderCalendarView(container, options = {}) {
     label.textContent = name;
     dayNames.appendChild(label);
   }
-  container.appendChild(dayNames);
+  calWrap.appendChild(dayNames);
 
   // ── Grid (4 rows × 7 columns = 28 days) ──────────────────────────────────────
   const grid = document.createElement('div');
   grid.className = 'cal-grid';
-  container.appendChild(grid);
+  calWrap.appendChild(grid);
 
   for (let i = 0; i < DAYS_SHOWN; i++) {
     const day = new Date(weekStart);

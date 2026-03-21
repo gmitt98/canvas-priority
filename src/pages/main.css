@@ -473,15 +473,19 @@
   box-shadow: var(--shadow-primary);
 }
 
+/* Shared border wrapper — one border, one width, both grids match exactly */
+.cal-wrap {
+  border: 1px solid #d0d5e8;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
 /* Day-name header row (Mon–Sun labels above grid) */
 .cal-day-names {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  border: 1.5px solid #d0d5e8;
-  border-bottom: none;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: #eef0f8;
-  overflow: hidden;
+  border-bottom: 1px solid #d0d5e8;
 }
 
 .cal-day-name-label {
@@ -500,10 +504,6 @@
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  border: 1.5px solid #d0d5e8;
-  border-top: none;
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  overflow: hidden;
 }
 
 /* Day columns */

@@ -17,7 +17,8 @@ Canvas Priority imports your assignments from Canvas and ranks them using a thre
 3. Enable **Developer Mode** (toggle in top right)
 4. Click **Load unpacked**
 5. Select the `canvas-priority` folder
-6. Click the extension icon to start
+6. Under `details`, toggle `pin to toolbar`
+7. Click the extension icon in the toolbar to start
 
 ## Setup
 
