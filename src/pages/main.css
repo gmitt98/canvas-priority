@@ -41,35 +41,35 @@
 .header-center { flex: 1; display: flex; justify-content: center; }
 .header-right  { display: flex; align-items: center; gap: var(--spacing-sm); }
 
-/* ── View toggle ──────────────────────────────────────────────────────────────── */
+/* ── View toggle — iOS-style segmented control ────────────────────────────────── */
 .view-toggle {
   display: flex;
-  background: var(--color-bg);
-  border: 1.5px solid var(--color-border-strong);
-  border-radius: var(--radius-lg);
-  padding: 4px;
-  gap: 3px;
+  background: #e2e5ea;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
 }
 
 .view-btn {
-  padding: 6px 20px;
+  padding: 7px 22px;
   font-size: var(--font-size-sm);
   font-weight: 600;
   letter-spacing: 0.01em;
-  border-radius: var(--radius-md);
-  color: var(--color-text-muted);
+  border-radius: var(--radius-full);
+  color: #6b7280;
   background: transparent;
-  transition: background-color var(--transition), color var(--transition), box-shadow var(--transition);
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
 }
 
-/* Active state: solid primary fill — clearly selected */
+/* Active: white pill elevated with shadow — unmistakably selected */
 .view-btn.active {
-  background: var(--color-primary);
-  color: #fff;
-  box-shadow: var(--shadow-primary);
+  background: #ffffff;
+  color: var(--color-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14), 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 .view-btn:not(.active):hover {
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.5);
   color: var(--color-text);
 }
 
@@ -87,22 +87,17 @@
 .refresh-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
   color: var(--color-text-muted);
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border-strong);
-  border-radius: var(--radius-full);
-  padding: 5px 14px;
-  letter-spacing: 0.01em;
-  transition: color var(--transition), background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  padding: 4px 6px;
+  border-radius: var(--radius-md);
+  transition: color var(--transition), background var(--transition);
 }
 .refresh-btn:hover:not(:disabled) {
   color: var(--color-primary);
-  border-color: var(--color-primary);
   background: var(--color-primary-light);
-  box-shadow: var(--shadow-focus);
 }
 
 /* ── Main content ────────────────────────────────────────────────────────────── */
