@@ -23,6 +23,8 @@ Inside the unzipped folder you'll find a folder called `canvas-priority`. That's
 
 The extension should appear in your list. If you see an error, make sure you selected the right folder.
 
+You can pin the extension to your toolbar under `details`.
+
 ---
 
 ## Step 3 — Get your Canvas access token
