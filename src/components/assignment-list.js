@@ -4,6 +4,8 @@ import { formatDueDate, getPriorityLevel, escapeHtml, truncate, debounce } from 
 
 /**
  * Render the assignment list as a table into container.
+ * The toolbar is created once and preserved across re-renders to keep focus
+ * and debounce state intact. Only the table section is rebuilt each time.
  * @param {HTMLElement} container
  * @param {Object} options
  */
@@ -18,42 +20,53 @@ export function renderAssignmentList(container, options = {}) {
     handlers = {},
   } = options;
 
-  container.innerHTML = '';
+  // ── Toolbar (create once, update state on re-renders) ─────────────────────────
+  let toolbar = container.querySelector('.list-toolbar');
+  if (!toolbar) {
+    toolbar = document.createElement('div');
+    toolbar.className = 'list-toolbar';
+    toolbar.innerHTML = `
+      <div class="toolbar-search">
+        <span class="search-icon">🔍</span>
+        <input
+          type="search"
+          class="search-input"
+          placeholder="Search assignments, courses, or points…"
+          value="${escapeHtml(filterText)}"
+          aria-label="Search assignments"
+        />
+      </div>
+      <div class="toolbar-filters">
+        <label class="filter-chip ${showCompleted ? 'active' : ''}">
+          <input type="checkbox" class="show-completed-checkbox" ${showCompleted ? 'checked' : ''} />
+          Show completed
+        </label>
+      </div>
+    `;
+    container.appendChild(toolbar);
 
-  // ── Toolbar ──────────────────────────────────────────────────────────────────
-  const toolbar = document.createElement('div');
-  toolbar.className = 'list-toolbar';
-  toolbar.innerHTML = `
-    <div class="toolbar-search">
-      <span class="search-icon">🔍</span>
-      <input
-        type="search"
-        class="search-input"
-        placeholder="Search assignments or courses…"
-        value="${escapeHtml(filterText)}"
-        aria-label="Search assignments"
-      />
-    </div>
-    <div class="toolbar-filters">
-      <label class="filter-chip ${showCompleted ? 'active' : ''}">
-        <input type="checkbox" class="show-completed-checkbox" ${showCompleted ? 'checked' : ''} />
-        Show completed
-      </label>
-    </div>
-  `;
-  container.appendChild(toolbar);
+    // Attach listeners once — handlers are closures over main.js state so always current
+    const searchInput = toolbar.querySelector('.search-input');
+    searchInput.addEventListener('input', debounce((e) => {
+      if (handlers.onSearchChange) handlers.onSearchChange(e.target.value);
+    }, 150));
 
-  const searchInput = toolbar.querySelector('.search-input');
-  searchInput.addEventListener('input', debounce((e) => {
-    if (handlers.onSearchChange) handlers.onSearchChange(e.target.value);
-  }, 250));
+    const showCompletedCheckbox = toolbar.querySelector('.show-completed-checkbox');
+    const filterChip = toolbar.querySelector('.filter-chip');
+    showCompletedCheckbox.addEventListener('change', (e) => {
+      filterChip.classList.toggle('active', e.target.checked);
+      if (handlers.onShowCompletedChange) handlers.onShowCompletedChange(e.target.checked);
+    });
+  } else {
+    // Sync checkbox/chip state without touching the search input (user may be typing)
+    const checkbox = toolbar.querySelector('.show-completed-checkbox');
+    const filterChip = toolbar.querySelector('.filter-chip');
+    checkbox.checked = showCompleted;
+    filterChip.classList.toggle('active', showCompleted);
+  }
 
-  const showCompletedCheckbox = toolbar.querySelector('.show-completed-checkbox');
-  const filterChip = toolbar.querySelector('.filter-chip');
-  showCompletedCheckbox.addEventListener('change', (e) => {
-    filterChip.classList.toggle('active', e.target.checked);
-    if (handlers.onShowCompletedChange) handlers.onShowCompletedChange(e.target.checked);
-  });
+  // Remove previous table section before rebuilding
+  container.querySelectorAll('.table-wrap, .empty-state, .table-footer').forEach(el => el.remove());
 
   // ── Filter & sort data ────────────────────────────────────────────────────────
   let rows = assignments;
@@ -66,7 +79,8 @@ export function renderAssignmentList(container, options = {}) {
       return (
         a.name.toLowerCase().includes(q) ||
         (c.name || '').toLowerCase().includes(q) ||
-        (c.course_code || '').toLowerCase().includes(q)
+        (c.course_code || '').toLowerCase().includes(q) ||
+        String(a.points_possible ?? '').includes(q)
       );
     });
   }
@@ -95,8 +109,9 @@ export function renderAssignmentList(container, options = {}) {
   tableWrap.className = 'table-wrap';
 
   if (rows.length === 0) {
+    tableWrap.className = 'empty-state';
     tableWrap.innerHTML = `
-      <div class="empty-state">
+      <div>
         ${assignments.length === 0
           ? '<p>No assignments yet — click <strong>↻ Refresh</strong> to sync from Canvas.</p>'
           : filterText

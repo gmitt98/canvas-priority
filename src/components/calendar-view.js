@@ -14,6 +14,7 @@ export function renderCalendarView(container, options = {}) {
     courseMap = {},
     weekStart = getWeekStart(new Date()),
     selectedDate = null,
+    showCompleted = false,
     handlers = {},
   } = options;
 
@@ -33,6 +34,12 @@ export function renderCalendarView(container, options = {}) {
     <div class="cal-nav-center">
       <h2 class="week-label">${_formatPeriodLabel(weekStart, periodEnd)}</h2>
       ${_isCurrentPeriod(weekStart, todayStr) ? '' : `<button class="today-btn">Today</button>`}
+    </div>
+    <div class="cal-nav-right">
+      <label class="filter-chip ${showCompleted ? 'active' : ''}">
+        <input type="checkbox" class="show-completed-checkbox" ${showCompleted ? 'checked' : ''} />
+        Show completed
+      </label>
     </div>
     <button class="cal-nav-btn next-week-btn" aria-label="Next 4 weeks">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -54,10 +61,18 @@ export function renderCalendarView(container, options = {}) {
     if (handlers.onWeekChange) handlers.onWeekChange(getWeekStart(new Date()));
   });
 
+  const showCompletedCheckbox = nav.querySelector('.show-completed-checkbox');
+  const filterChip = nav.querySelector('.filter-chip');
+  showCompletedCheckbox?.addEventListener('change', (e) => {
+    filterChip.classList.toggle('active', e.target.checked);
+    if (handlers.onShowCompletedChange) handlers.onShowCompletedChange(e.target.checked);
+  });
+
   // ── Build date → assignments map ──────────────────────────────────────────────
   const byDate = {};
   for (const a of assignments) {
-    if (!a.due_at || a.completed_local) continue;
+    if (!a.due_at) continue;
+    if (a.completed_local && !showCompleted) continue;
     const d = toDateString(new Date(a.due_at));
     if (!byDate[d]) byDate[d] = [];
     byDate[d].push(a);
@@ -201,10 +216,12 @@ export function renderCalendarView(container, options = {}) {
       for (const a of items) {
         const course = courseMap[a.course_id] || {};
         const level  = getPriorityLevel(a.priority_score || 0);
+        const score  = Math.round((a.priority_score || 0) * 100);
         const li = document.createElement('li');
-        li.className = `cal-detail-item cal-detail-item--${level}`;
+        li.className = `cal-detail-item cal-detail-item--${level}${a.completed_local ? ' cal-detail-item--completed' : ''}`;
         li.innerHTML = `
           <span class="priority-pill ${level}">${level.toUpperCase()}</span>
+          <span class="cal-detail-score">${score}</span>
           <span class="cal-detail-name">${escapeHtml(a.name)}</span>
           <span class="cal-detail-course">${escapeHtml(course.course_code || course.name || '')}</span>
           <span class="cal-detail-pts">${a.points_possible > 0 ? a.points_possible + ' pts' : '—'}</span>

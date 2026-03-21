@@ -404,6 +404,11 @@
   gap: var(--spacing-sm);
 }
 
+.cal-nav-right {
+  display: flex;
+  align-items: center;
+}
+
 .week-label {
   font-size: var(--font-size-lg);
   font-weight: 700;
@@ -654,10 +659,23 @@
 .cal-detail-item--medium { border-left: 3px solid var(--color-medium); }
 .cal-detail-item--low    { border-left: 3px solid var(--color-low); }
 
+.cal-detail-score {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  min-width: 24px;
+  text-align: right;
+}
+
 .cal-detail-name {
   font-weight: 600;
   color: var(--color-text);
   flex: 1;
+}
+
+.cal-detail-item--completed .cal-detail-name {
+  text-decoration: line-through;
+  opacity: 0.5;
 }
 
 .cal-detail-course {

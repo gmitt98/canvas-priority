@@ -223,6 +223,7 @@ function renderAll() {
       courseMap: state.courseMap,
       weekStart: state.calendarWeekStart,
       selectedDate: state.selectedDate,
+      showCompleted: state.uiState.show_completed,
       handlers: {
         onDateSelect: (dateStr) => {
           state.selectedDate = state.selectedDate === dateStr ? null : dateStr;
@@ -231,6 +232,11 @@ function renderAll() {
         onWeekChange: (newWeekStart) => {
           state.calendarWeekStart = newWeekStart;
           state.selectedDate = null;
+          renderAll();
+        },
+        onShowCompletedChange: (show) => {
+          state.uiState.show_completed = show;
+          storage.updateUIState({ show_completed: show });
           renderAll();
         },
         onAssignmentClick: (assignment) => {
