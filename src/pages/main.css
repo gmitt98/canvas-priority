@@ -142,7 +142,7 @@
   width: 100%;
   padding: 10px 16px 10px 40px;
   font-size: var(--font-size-base);
-  border: 1.5px solid var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
   background: var(--color-surface);
   color: var(--color-text);
@@ -172,7 +172,7 @@
   letter-spacing: 0.01em;
   color: var(--color-text-muted);
   background: var(--color-surface);
-  border: 1.5px solid var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
   cursor: pointer;
   user-select: none;
@@ -365,7 +365,7 @@
   letter-spacing: 0.01em;
   color: var(--color-text-muted);
   background: transparent;
-  border: 1.5px solid var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
   padding: 4px 11px;
   border-radius: var(--radius-full);
   transition: background var(--transition), color var(--transition), border-color var(--transition);
@@ -434,15 +434,15 @@
   letter-spacing: -0.02em;
 }
 
-/* Arrow nav buttons — visible as buttons, not bare icons */
+/* Arrow nav buttons */
 .cal-nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-strong);
   color: var(--color-text-muted);
   background: var(--color-surface);
   transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
