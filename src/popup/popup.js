@@ -19,25 +19,31 @@ const viewAllBtn = document.getElementById('view-all-btn');
 const setupBtn = document.getElementById('setup-btn');
 
 async function init() {
-  await storage.initialize();
+  try {
+    await storage.initialize();
 
-  const config = await storage.getConfig();
-  if (!config.canvas_token) {
+    const config = await storage.getConfig();
+    if (!config.canvas_token) {
+      notConfigured.hidden = false;
+      return;
+    }
+
+    const lastSync = await storage.getLastSyncTime();
+    popupStatus.textContent = lastSync
+      ? `Last synced: ${formatRelativeTime(lastSync)}`
+      : 'Not yet synced';
+
+    const assignments = await storage.getAssignments();
+    const courses = await storage.getCourses();
+    const courseMap = Object.fromEntries(courses.map(c => [c.id, c]));
+
+    renderTopAssignments(assignments, courseMap);
+  } catch (err) {
+    console.error('[Canvas Priority] Popup init error:', err);
+    alertContainer.innerHTML = `<div class="alert alert-error" role="alert">Failed to load assignments.</div>`;
+  } finally {
     popupLoading.hidden = true;
-    notConfigured.hidden = false;
-    return;
   }
-
-  const lastSync = await storage.getLastSyncTime();
-  popupStatus.textContent = lastSync
-    ? `Last synced: ${formatRelativeTime(lastSync)}`
-    : 'Not yet synced';
-
-  const assignments = await storage.getAssignments();
-  const courses = await storage.getCourses();
-  const courseMap = Object.fromEntries(courses.map(c => [c.id, c]));
-
-  renderTopAssignments(assignments, courseMap);
 }
 
 function renderTopAssignments(assignments, courseMap) {
