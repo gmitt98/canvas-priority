@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canvas Priority</title>
+  <link rel="stylesheet" href="../../assets/styles/global.css" />
+  <link rel="stylesheet" href="main.css" />
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- ── App Header ──────────────────────────────────────────────────── -->
+    <header class="app-header">
+      <div class="header-left">
+        <img src="../../assets/icons/icon-16.png" alt="" class="header-logo" />
+        <h1 class="app-title">Canvas Priority</h1>
+      </div>
+      <div class="header-center">
+        <div class="view-toggle" role="group" aria-label="View toggle">
+          <button class="btn view-btn active" id="list-view-btn" aria-pressed="true" data-view="list">
+            ☰ List
+          </button>
+          <button class="btn view-btn" id="calendar-view-btn" aria-pressed="false" data-view="calendar">
+            📅 Calendar
+          </button>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="sync-indicator-container"></div>
+      </div>
+    </header>
+
+    <!-- ── Main content ────────────────────────────────────────────────── -->
+    <main class="app-main">
+      <div id="alert-container"></div>
+
+      <!-- List view -->
+      <section id="list-view" class="view-section active" aria-label="Assignment list">
+        <div id="assignment-list-container"></div>
+      </section>
+
+      <!-- Calendar view -->
+      <section id="calendar-view" class="view-section" aria-label="Calendar view" hidden>
+        <div id="calendar-container"></div>
+      </section>
+    </main>
+
+    <!-- ── Override modal ──────────────────────────────────────────────── -->
+    <div id="override-modal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="override-modal-title">
+      <div class="modal-content">
+        <h2 id="override-modal-title">Override Priority</h2>
+        <p class="modal-description">Set a custom priority score (0.0 – 1.0). This will override the calculated score and persist across syncs.</p>
+        <div class="form-group">
+          <label class="form-label" for="override-value">Priority Score</label>
+          <input type="number" id="override-value" class="form-input" min="0" max="1" step="0.01" placeholder="0.00 – 1.00" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="override-cancel-btn">Cancel</button>
+          <button class="btn btn-primary" id="override-clear-btn">Clear override</button>
+          <button class="btn btn-primary" id="override-save-btn">Save</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

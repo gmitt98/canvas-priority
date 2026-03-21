@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canvas Priority — Setup</title>
+  <link rel="stylesheet" href="../../assets/styles/global.css" />
+  <link rel="stylesheet" href="onboarding.css" />
+</head>
+<body>
+  <div class="onboarding-container">
+    <header class="onboarding-header">
+      <img src="../../assets/icons/icon-48.png" alt="" class="onboarding-logo" />
+      <h1>Canvas Priority</h1>
+      <p class="onboarding-subtitle">Smart assignment prioritization for Canvas LMS</p>
+    </header>
+
+    <main class="onboarding-card">
+      <h2>Connect your Canvas account</h2>
+      <p class="onboarding-description">
+        Enter your Canvas access token to get started. Your token stays on your device and is never sent to any third-party server.
+      </p>
+
+      <div id="alert-container"></div>
+
+      <form id="onboarding-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="canvas-domain">Canvas School Domain</label>
+          <input
+            type="text"
+            id="canvas-domain"
+            class="form-input"
+            placeholder="school.instructure.com"
+            autocomplete="off"
+            spellcheck="false"
+            aria-describedby="domain-help"
+            required
+          />
+          <p id="domain-help" class="form-help">
+            Enter your school's Canvas URL without <code>https://</code> — e.g., <code>myschool.instructure.com</code>
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="canvas-token">Canvas Access Token</label>
+          <input
+            type="password"
+            id="canvas-token"
+            class="form-input"
+            placeholder="Paste your access token here"
+            autocomplete="off"
+            spellcheck="false"
+            aria-describedby="token-help"
+            required
+          />
+          <p id="token-help" class="form-help">
+            Don't have a token?
+            <a href="#" id="token-help-link">How to generate one →</a>
+          </p>
+        </div>
+
+        <button type="submit" id="connect-btn" class="btn btn-primary connect-btn">
+          <span class="btn-text">Connect</span>
+          <span class="spinner" id="connect-spinner" hidden aria-hidden="true"></span>
+        </button>
+      </form>
+
+      <div id="token-instructions" class="token-instructions" hidden>
+        <h3>How to get your Canvas access token</h3>
+        <ol>
+          <li>Log into Canvas at your school's website</li>
+          <li>Click your <strong>Account</strong> menu (top-left avatar)</li>
+          <li>Go to <strong>Settings</strong></li>
+          <li>Scroll to <strong>Approved Integrations</strong></li>
+          <li>Click <strong>+ New Access Token</strong></li>
+          <li>Enter a purpose (e.g., "Canvas Priority Extension")</li>
+          <li>Click <strong>Generate Token</strong></li>
+          <li>Copy the token and paste it above</li>
+        </ol>
+        <p class="security-note">
+          🔒 Keep your token private. It grants access to your Canvas account.
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="onboarding.js"></script>
+</body>
+</html>

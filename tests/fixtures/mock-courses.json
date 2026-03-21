@@ -1,0 +1,50 @@
+[
+  {
+    "id": 101,
+    "name": "AP Calculus AB",
+    "course_code": "MATH401",
+    "workflow_state": "available",
+    "enrollment_term_id": 5,
+    "enrollments": [
+      {
+        "type": "student",
+        "role": "StudentEnrollment",
+        "enrollment_state": "active",
+        "computed_current_score": 87.5,
+        "computed_final_score": 85.2
+      }
+    ]
+  },
+  {
+    "id": 102,
+    "name": "AP English Literature",
+    "course_code": "ENG402",
+    "workflow_state": "available",
+    "enrollment_term_id": 5,
+    "enrollments": [
+      {
+        "type": "student",
+        "role": "StudentEnrollment",
+        "enrollment_state": "active",
+        "computed_current_score": 92.1,
+        "computed_final_score": 91.8
+      }
+    ]
+  },
+  {
+    "id": 103,
+    "name": "AP US History",
+    "course_code": "HIST403",
+    "workflow_state": "available",
+    "enrollment_term_id": 5,
+    "enrollments": [
+      {
+        "type": "student",
+        "role": "StudentEnrollment",
+        "enrollment_state": "active",
+        "computed_current_score": 80.3,
+        "computed_final_score": 79.5
+      }
+    ]
+  }
+]

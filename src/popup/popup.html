@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Canvas Priority</title>
+  <link rel="stylesheet" href="../assets/styles/global.css" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup-container">
+
+    <!-- Header -->
+    <header class="popup-header">
+      <div class="popup-header-left">
+        <img src="../assets/icons/icon-16.png" alt="" class="popup-logo" />
+        <span class="popup-title">Canvas Priority</span>
+      </div>
+      <button class="btn btn-ghost refresh-btn" id="refresh-btn" aria-label="Refresh data">↻</button>
+    </header>
+
+    <!-- Status -->
+    <div class="popup-status" id="popup-status"></div>
+
+    <!-- Alert -->
+    <div id="alert-container"></div>
+
+    <!-- Top assignments -->
+    <main class="popup-main" id="popup-main">
+      <div class="popup-loading" id="popup-loading">
+        <span class="spinner"></span>
+        <span>Loading…</span>
+      </div>
+      <ul class="top-assignments" id="top-assignments" hidden></ul>
+      <div class="empty-state" id="popup-empty" hidden>
+        <p>No upcoming assignments.</p>
+      </div>
+      <div class="not-configured" id="not-configured" hidden>
+        <p>Canvas Priority is not set up yet.</p>
+        <button class="btn btn-primary setup-btn" id="setup-btn">Set up now</button>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="popup-footer">
+      <button class="btn btn-ghost view-all-btn" id="view-all-btn">View all assignments →</button>
+    </footer>
+
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

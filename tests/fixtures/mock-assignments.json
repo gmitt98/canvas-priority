@@ -1,0 +1,72 @@
+[
+  {
+    "id": 5001,
+    "course_id": 101,
+    "name": "Chapter 5 Homework",
+    "description": "<p>Complete problems 1-20</p>",
+    "due_at": "__TOMORROW__",
+    "points_possible": 20,
+    "workflow_state": "published",
+    "html_url": "https://school.instructure.com/courses/101/assignments/5001",
+    "submission": {
+      "workflow_state": "unsubmitted",
+      "submitted_at": null
+    }
+  },
+  {
+    "id": 5002,
+    "course_id": 101,
+    "name": "Unit Test: Derivatives",
+    "description": "",
+    "due_at": "__IN_2_DAYS__",
+    "points_possible": 100,
+    "workflow_state": "published",
+    "html_url": "https://school.instructure.com/courses/101/assignments/5002",
+    "submission": {
+      "workflow_state": "unsubmitted",
+      "submitted_at": null
+    }
+  },
+  {
+    "id": 5003,
+    "course_id": 102,
+    "name": "Essay: Great Gatsby Analysis",
+    "description": "",
+    "due_at": "__IN_7_DAYS__",
+    "points_possible": 50,
+    "workflow_state": "published",
+    "html_url": "https://school.instructure.com/courses/102/assignments/5003",
+    "submission": {
+      "workflow_state": "unsubmitted",
+      "submitted_at": null
+    }
+  },
+  {
+    "id": 5004,
+    "course_id": 101,
+    "name": "Practice Quiz (no grade)",
+    "description": "",
+    "due_at": "__TOMORROW__",
+    "points_possible": 0,
+    "workflow_state": "published",
+    "html_url": "https://school.instructure.com/courses/101/assignments/5004",
+    "submission": {
+      "workflow_state": "unsubmitted",
+      "submitted_at": null
+    }
+  },
+  {
+    "id": 5005,
+    "course_id": 103,
+    "name": "DBQ Essay",
+    "description": "",
+    "due_at": "__IN_15_DAYS__",
+    "points_possible": 100,
+    "workflow_state": "published",
+    "html_url": "https://school.instructure.com/courses/103/assignments/5005",
+    "submission": {
+      "workflow_state": "unsubmitted",
+      "submitted_at": null
+    }
+  }
+]

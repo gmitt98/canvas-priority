@@ -1,0 +1,160 @@
+/* Popup styles — 400×600px */
+
+body {
+  width: 400px;
+  min-height: 320px;
+  max-height: 600px;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.popup-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.popup-logo { width: 16px; height: 16px; }
+
+.popup-title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* ── Status bar ─────────────────────────────────────────────────────────────── */
+.popup-status {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  padding: 4px var(--spacing-md);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  min-height: 22px;
+}
+
+/* ── Main ───────────────────────────────────────────────────────────────────── */
+.popup-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.popup-loading {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg) 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* ── Top assignments list ────────────────────────────────────────────────────── */
+.top-assignments {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.top-assignment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: box-shadow var(--transition);
+}
+
+.top-assignment-item:hover { box-shadow: var(--shadow-sm); }
+
+.top-assignment-item[data-priority="high"] { border-left: 3px solid var(--color-high); }
+.top-assignment-item[data-priority="medium"] { border-left: 3px solid var(--color-medium); }
+.top-assignment-item[data-priority="low"] { border-left: 3px solid var(--color-low); }
+
+.ta-rank {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  min-width: 16px;
+  padding-top: 1px;
+}
+
+.ta-body { flex: 1; min-width: 0; }
+
+.ta-name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ta-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: 2px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ta-course {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 0 5px;
+}
+
+.ta-due.overdue { color: var(--color-error); }
+
+.ta-score {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  padding-top: 1px;
+}
+
+/* ── States ─────────────────────────────────────────────────────────────────── */
+.not-configured {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.setup-btn { margin-top: var(--spacing-md); }
+
+/* ── Footer ─────────────────────────────────────────────────────────────────── */
+.popup-footer {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.view-all-btn {
+  width: 100%;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  padding: var(--spacing-xs);
+}
+.view-all-btn:hover { background: var(--color-bg); }
