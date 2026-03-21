@@ -82,6 +82,9 @@
   padding: 0;
 }
 
+/* Ensure the HTML hidden attribute always wins over class-level display rules */
+[hidden] { display: none !important; }
+
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
