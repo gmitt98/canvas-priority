@@ -510,6 +510,8 @@
 .cal-day {
   background: var(--color-surface);
   min-height: 110px;
+  min-width: 0;        /* override grid's min-width:auto so 1fr is always respected */
+  overflow: hidden;    /* prevent any content from pushing the cell wider */
   padding: 8px 8px 6px;
   cursor: pointer;
   border-right: 1px solid #d0d5e8;
@@ -589,6 +591,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;   /* flex children also need this to respect parent's constrained width */
+  overflow: hidden;
 }
 
 .cal-chip {
