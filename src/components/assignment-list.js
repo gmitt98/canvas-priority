@@ -74,11 +74,11 @@ export function renderAssignmentList(container, options = {}) {
   rows = [...rows].sort((a, b) => {
     let cmp = 0;
     if (sortBy === 'priority') {
-      cmp = (b.priority_score || 0) - (a.priority_score || 0);
+      cmp = (a.priority_score || 0) - (b.priority_score || 0); // ascending base
     } else if (sortBy === 'due_date') {
       const da = a.due_at ? new Date(a.due_at).getTime() : Infinity;
       const db = b.due_at ? new Date(b.due_at).getTime() : Infinity;
-      cmp = da - db;
+      cmp = da - db; // ascending base (soonest first)
     } else if (sortBy === 'course') {
       const ca = (courseMap[a.course_id]?.name || '').toLowerCase();
       const cb = (courseMap[b.course_id]?.name || '').toLowerCase();
@@ -86,9 +86,8 @@ export function renderAssignmentList(container, options = {}) {
     } else if (sortBy === 'name') {
       cmp = a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     }
-    // For due_date ascending is most useful, others default desc
-    if (sortBy !== 'due_date') cmp = sortDir === 'asc' ? -cmp : cmp;
-    return cmp;
+    // Apply sort direction uniformly across all columns
+    return sortDir === 'asc' ? cmp : -cmp;
   });
 
   // ── Table ────────────────────────────────────────────────────────────────────
@@ -137,7 +136,9 @@ export function renderAssignmentList(container, options = {}) {
     const onClick = () => {
       const key = header.dataset.sort;
       if (handlers.onSortChange) {
-        const newDir = sortBy === key && sortDir === 'desc' ? 'asc' : 'desc';
+        // Toggle if already sorted by this column, else use sensible default per column
+        const defaultDir = key === 'due_date' ? 'asc' : 'desc';
+        const newDir = sortBy === key ? (sortDir === 'asc' ? 'desc' : 'asc') : defaultDir;
         handlers.onSortChange(key, newDir);
       }
     };
