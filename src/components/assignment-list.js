@@ -117,6 +117,8 @@ export function renderAssignmentList(container, options = {}) {
       cmp = ca < cb ? -1 : ca > cb ? 1 : 0;
     } else if (sortBy === 'name') {
       cmp = a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+    } else if (sortBy === 'points') {
+      cmp = (a.points_possible || 0) - (b.points_possible || 0);
     }
     // Apply sort direction uniformly across all columns
     return sortDir === 'asc' ? cmp : -cmp;
@@ -157,7 +159,7 @@ export function renderAssignmentList(container, options = {}) {
         ${th('Assignment', 'name')}
         ${th('Course', 'course')}
         ${th('Due', 'due_date')}
-        <th class="col-points">Points</th>
+        ${th('Points', 'points')}
         <th class="col-actions">Actions</th>
       </tr>
     </thead>
