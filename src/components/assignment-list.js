@@ -1,24 +1,18 @@
-// Assignment list component — sortable, filterable list of assignment cards
+// Assignment list — rendered as a sortable, searchable table
 
-import { createAssignmentCard } from './assignment-card.js';
-import { debounce } from '../lib/utils.js';
+import { formatDueDate, getPriorityLevel, escapeHtml, truncate, debounce } from '../lib/utils.js';
 
 /**
- * Render the assignment list into a container element.
+ * Render the assignment list as a table into container.
  * @param {HTMLElement} container
  * @param {Object} options
- * @param {Array} options.assignments
- * @param {Object} options.courseMap - courseId → course
- * @param {string} options.sortBy - 'priority' | 'due_date' | 'course'
- * @param {boolean} options.showCompleted
- * @param {string} options.filterText - Search filter
- * @param {Object} options.handlers - { onComplete, onOverride, onSortChange, onSearchChange, onShowCompletedChange }
  */
 export function renderAssignmentList(container, options = {}) {
   const {
     assignments = [],
     courseMap = {},
     sortBy = 'priority',
+    sortDir = 'desc',
     showCompleted = false,
     filterText = '',
     handlers = {},
@@ -26,111 +20,195 @@ export function renderAssignmentList(container, options = {}) {
 
   container.innerHTML = '';
 
-  // ── Controls bar ─────────────────────────────────────────────────────────────
-  const controls = document.createElement('div');
-  controls.className = 'list-controls';
-  controls.innerHTML = `
-    <div class="list-controls-left">
-      <input type="search" class="form-input search-input" placeholder="Search assignments…" value="${filterText}" aria-label="Search assignments" />
+  // ── Toolbar ──────────────────────────────────────────────────────────────────
+  const toolbar = document.createElement('div');
+  toolbar.className = 'list-toolbar';
+  toolbar.innerHTML = `
+    <div class="toolbar-search">
+      <span class="search-icon">🔍</span>
+      <input
+        type="search"
+        class="search-input"
+        placeholder="Search assignments or courses…"
+        value="${escapeHtml(filterText)}"
+        aria-label="Search assignments"
+      />
     </div>
-    <div class="list-controls-right">
-      <label class="sort-label">
-        Sort:
-        <select class="form-input sort-select" aria-label="Sort assignments">
-          <option value="priority" ${sortBy === 'priority' ? 'selected' : ''}>Priority</option>
-          <option value="due_date" ${sortBy === 'due_date' ? 'selected' : ''}>Due Date</option>
-          <option value="course" ${sortBy === 'course' ? 'selected' : ''}>Course</option>
-        </select>
-      </label>
-      <label class="show-completed-label">
+    <div class="toolbar-filters">
+      <label class="filter-chip ${showCompleted ? 'active' : ''}">
         <input type="checkbox" class="show-completed-checkbox" ${showCompleted ? 'checked' : ''} />
-        Show done
+        Show completed
       </label>
     </div>
   `;
-  container.appendChild(controls);
+  container.appendChild(toolbar);
 
-  // Wire controls
-  const searchInput = controls.querySelector('.search-input');
+  const searchInput = toolbar.querySelector('.search-input');
   searchInput.addEventListener('input', debounce((e) => {
     if (handlers.onSearchChange) handlers.onSearchChange(e.target.value);
-  }, 300));
+  }, 250));
 
-  const sortSelect = controls.querySelector('.sort-select');
-  sortSelect.addEventListener('change', (e) => {
-    if (handlers.onSortChange) handlers.onSortChange(e.target.value);
-  });
-
-  const showCompletedCheckbox = controls.querySelector('.show-completed-checkbox');
+  const showCompletedCheckbox = toolbar.querySelector('.show-completed-checkbox');
+  const filterChip = toolbar.querySelector('.filter-chip');
   showCompletedCheckbox.addEventListener('change', (e) => {
+    filterChip.classList.toggle('active', e.target.checked);
     if (handlers.onShowCompletedChange) handlers.onShowCompletedChange(e.target.checked);
   });
 
-  // ── Filter ───────────────────────────────────────────────────────────────────
-  let filtered = assignments;
-
-  if (!showCompleted) {
-    filtered = filtered.filter(a => !a.completed_local);
-  }
+  // ── Filter & sort data ────────────────────────────────────────────────────────
+  let rows = assignments;
+  if (!showCompleted) rows = rows.filter(a => !a.completed_local);
 
   if (filterText.trim()) {
-    const query = filterText.toLowerCase();
-    filtered = filtered.filter(a => {
-      const course = courseMap[a.course_id] || {};
+    const q = filterText.toLowerCase();
+    rows = rows.filter(a => {
+      const c = courseMap[a.course_id] || {};
       return (
-        a.name.toLowerCase().includes(query) ||
-        (course.name || '').toLowerCase().includes(query) ||
-        (course.course_code || '').toLowerCase().includes(query)
+        a.name.toLowerCase().includes(q) ||
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.course_code || '').toLowerCase().includes(q)
       );
     });
   }
 
-  // ── Sort ─────────────────────────────────────────────────────────────────────
-  filtered = [...filtered].sort((a, b) => {
+  rows = [...rows].sort((a, b) => {
+    let cmp = 0;
     if (sortBy === 'priority') {
-      return (b.priority_score || 0) - (a.priority_score || 0);
+      cmp = (b.priority_score || 0) - (a.priority_score || 0);
+    } else if (sortBy === 'due_date') {
+      const da = a.due_at ? new Date(a.due_at).getTime() : Infinity;
+      const db = b.due_at ? new Date(b.due_at).getTime() : Infinity;
+      cmp = da - db;
+    } else if (sortBy === 'course') {
+      const ca = (courseMap[a.course_id]?.name || '').toLowerCase();
+      const cb = (courseMap[b.course_id]?.name || '').toLowerCase();
+      cmp = ca < cb ? -1 : ca > cb ? 1 : 0;
+    } else if (sortBy === 'name') {
+      cmp = a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     }
-    if (sortBy === 'due_date') {
-      const dateA = a.due_at ? new Date(a.due_at).getTime() : Infinity;
-      const dateB = b.due_at ? new Date(b.due_at).getTime() : Infinity;
-      return dateA - dateB;
-    }
-    if (sortBy === 'course') {
-      const courseA = (courseMap[a.course_id]?.name || '').toLowerCase();
-      const courseB = (courseMap[b.course_id]?.name || '').toLowerCase();
-      if (courseA < courseB) return -1;
-      if (courseA > courseB) return 1;
-      return (b.priority_score || 0) - (a.priority_score || 0);
-    }
-    return 0;
+    // For due_date ascending is most useful, others default desc
+    if (sortBy !== 'due_date') cmp = sortDir === 'asc' ? -cmp : cmp;
+    return cmp;
   });
 
-  // ── Render cards ─────────────────────────────────────────────────────────────
-  const list = document.createElement('div');
-  list.className = 'assignment-list';
-  list.setAttribute('role', 'list');
+  // ── Table ────────────────────────────────────────────────────────────────────
+  const tableWrap = document.createElement('div');
+  tableWrap.className = 'table-wrap';
 
-  if (filtered.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'empty-state';
-    if (assignments.length === 0) {
-      empty.innerHTML = '<p>No assignments loaded yet. Click Refresh to sync from Canvas.</p>';
-    } else if (filterText) {
-      empty.innerHTML = `<p>No assignments matching "<strong>${filterText}</strong>".</p>`;
-    } else {
-      empty.innerHTML = '<p>All caught up! No assignments due soon. 🎉</p>';
-    }
-    list.appendChild(empty);
-  } else {
-    for (const assignment of filtered) {
-      const cardEl = createAssignmentCard(assignment, courseMap, {
-        onComplete: handlers.onComplete,
-        onOverride: handlers.onOverride,
-      });
-      cardEl.setAttribute('role', 'listitem');
-      list.appendChild(cardEl);
-    }
+  if (rows.length === 0) {
+    tableWrap.innerHTML = `
+      <div class="empty-state">
+        ${assignments.length === 0
+          ? '<p>No assignments yet — click <strong>↻ Refresh</strong> to sync from Canvas.</p>'
+          : filterText
+            ? `<p>No assignments match "<strong>${escapeHtml(filterText)}</strong>"</p>`
+            : '<p>All caught up! No pending assignments. 🎉</p>'}
+      </div>`;
+    container.appendChild(tableWrap);
+    return;
   }
 
-  container.appendChild(list);
+  // Helper to build a sortable <th>
+  function th(label, key, extraClass = '') {
+    const isActive = sortBy === key;
+    const arrow = isActive ? (sortDir === 'asc' ? ' ↑' : ' ↓') : '';
+    return `<th class="col-${key} ${extraClass} ${isActive ? 'sort-active' : ''}" data-sort="${key}" role="columnheader" aria-sort="${isActive ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}" tabindex="0">${label}${arrow}</th>`;
+  }
+
+  const table = document.createElement('table');
+  table.className = 'assignment-table';
+  table.setAttribute('role', 'table');
+  table.innerHTML = `
+    <thead>
+      <tr>
+        ${th('Priority', 'priority')}
+        ${th('Assignment', 'name')}
+        ${th('Course', 'course')}
+        ${th('Due', 'due_date')}
+        <th class="col-points">Points</th>
+        <th class="col-actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+
+  // Sort header clicks
+  table.querySelectorAll('th[data-sort]').forEach(header => {
+    const onClick = () => {
+      const key = header.dataset.sort;
+      if (handlers.onSortChange) {
+        const newDir = sortBy === key && sortDir === 'desc' ? 'asc' : 'desc';
+        handlers.onSortChange(key, newDir);
+      }
+    };
+    header.addEventListener('click', onClick);
+    header.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') onClick(); });
+  });
+
+  const tbody = table.querySelector('tbody');
+
+  rows.forEach((a, i) => {
+    const course = courseMap[a.course_id] || {};
+    const level = getPriorityLevel(a.priority_score || 0);
+    const dueDisplay = formatDueDate(a.due_at);
+    const isOverdue = a.due_at && new Date(a.due_at) < new Date();
+    const wouldDrop = a.priority_components?.wouldDropGrade;
+    const score = ((a.priority_score || 0) * 100).toFixed(0);
+
+    const tr = document.createElement('tr');
+    tr.className = `assignment-row priority-row-${level}${a.completed_local ? ' row-completed' : ''}`;
+    tr.dataset.id = a.id;
+
+    tr.innerHTML = `
+      <td class="col-priority">
+        <span class="priority-pill ${level}">${level.toUpperCase()}</span>
+        <span class="priority-score-num">${score}</span>
+        ${wouldDrop ? '<span class="grade-risk" title="Missing this would drop your letter grade">⚠</span>' : ''}
+      </td>
+      <td class="col-name">
+        ${a.html_url
+          ? `<a class="assignment-link" href="${escapeHtml(a.html_url)}" target="_blank" rel="noopener" title="${escapeHtml(a.name)}">${escapeHtml(truncate(a.name, 65))}</a>`
+          : `<span title="${escapeHtml(a.name)}">${escapeHtml(truncate(a.name, 65))}</span>`}
+        ${a.manual_override ? '<span class="override-tag">override</span>' : ''}
+      </td>
+      <td class="col-course">
+        <span class="course-chip">${escapeHtml(truncate(course.course_code || course.name || '—', 18))}</span>
+      </td>
+      <td class="col-due ${isOverdue ? 'overdue' : ''}">
+        ${escapeHtml(dueDisplay)}
+      </td>
+      <td class="col-points">${a.points_possible > 0 ? a.points_possible + ' pts' : '—'}</td>
+      <td class="col-actions">
+        <label class="done-toggle" title="${a.completed_local ? 'Mark incomplete' : 'Mark complete'}">
+          <input type="checkbox" class="done-checkbox" ${a.completed_local ? 'checked' : ''} aria-label="Mark as done" />
+          <span class="done-label">${a.completed_local ? 'Done' : 'Done'}</span>
+        </label>
+        <button class="action-btn override-btn" title="Override priority">✎</button>
+      </td>
+    `;
+
+    const checkbox = tr.querySelector('.done-checkbox');
+    checkbox.addEventListener('change', (e) => {
+      e.stopPropagation();
+      tr.classList.toggle('row-completed', e.target.checked);
+      if (handlers.onComplete) handlers.onComplete(a.id, e.target.checked);
+    });
+
+    const overrideBtn = tr.querySelector('.override-btn');
+    overrideBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (handlers.onOverride) handlers.onOverride(a.id);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  tableWrap.appendChild(table);
+  container.appendChild(tableWrap);
+
+  // Row count footer
+  const footer = document.createElement('div');
+  footer.className = 'table-footer';
+  footer.textContent = `${rows.length} assignment${rows.length !== 1 ? 's' : ''}`;
+  container.appendChild(footer);
 }

@@ -21,6 +21,7 @@ let state = {
     list_sort: 'priority',
     show_completed: false,
   },
+  sortDir: 'desc',
   filterText: '',
   calendarWeekStart: getWeekStart(new Date()),
   selectedDate: null,
@@ -193,13 +194,15 @@ function renderAll() {
       assignments: state.assignments,
       courseMap: state.courseMap,
       sortBy: state.uiState.list_sort,
+      sortDir: state.sortDir,
       showCompleted: state.uiState.show_completed,
       filterText: state.filterText,
       handlers: {
         onComplete: handleComplete,
         onOverride: handleOverride,
-        onSortChange: (sort) => {
+        onSortChange: (sort, dir) => {
           state.uiState.list_sort = sort;
+          state.sortDir = dir;
           storage.updateUIState({ list_sort: sort });
           renderAll();
         },
