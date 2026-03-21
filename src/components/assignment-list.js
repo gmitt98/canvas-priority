@@ -16,6 +16,7 @@ export function renderAssignmentList(container, options = {}) {
     sortBy = 'priority',
     sortDir = 'desc',
     showCompleted = false,
+    hideOverdue = false,
     filterText = '',
     handlers = {},
   } = options;
@@ -37,40 +38,57 @@ export function renderAssignmentList(container, options = {}) {
         />
       </div>
       <div class="toolbar-filters">
-        <label class="filter-chip ${showCompleted ? 'active' : ''}">
+        <label class="filter-chip ${showCompleted ? 'active' : ''}" data-chip="show-completed">
           <input type="checkbox" class="show-completed-checkbox" ${showCompleted ? 'checked' : ''} />
           Show completed
+        </label>
+        <label class="filter-chip ${hideOverdue ? 'active' : ''}" data-chip="hide-overdue">
+          <input type="checkbox" class="hide-overdue-checkbox" ${hideOverdue ? 'checked' : ''} />
+          Hide overdue
         </label>
       </div>
     `;
     container.appendChild(toolbar);
 
-    // Attach listeners once — handlers are closures over main.js state so always current
     const searchInput = toolbar.querySelector('.search-input');
     searchInput.addEventListener('input', debounce((e) => {
       if (handlers.onSearchChange) handlers.onSearchChange(e.target.value);
     }, 150));
 
     const showCompletedCheckbox = toolbar.querySelector('.show-completed-checkbox');
-    const filterChip = toolbar.querySelector('.filter-chip');
+    const showCompletedChip = toolbar.querySelector('[data-chip="show-completed"]');
     showCompletedCheckbox.addEventListener('change', (e) => {
-      filterChip.classList.toggle('active', e.target.checked);
+      showCompletedChip.classList.toggle('active', e.target.checked);
       if (handlers.onShowCompletedChange) handlers.onShowCompletedChange(e.target.checked);
     });
+
+    const hideOverdueCheckbox = toolbar.querySelector('.hide-overdue-checkbox');
+    const hideOverdueChip = toolbar.querySelector('[data-chip="hide-overdue"]');
+    hideOverdueCheckbox.addEventListener('change', (e) => {
+      hideOverdueChip.classList.toggle('active', e.target.checked);
+      if (handlers.onHideOverdueChange) handlers.onHideOverdueChange(e.target.checked);
+    });
   } else {
-    // Sync checkbox/chip state without touching the search input (user may be typing)
-    const checkbox = toolbar.querySelector('.show-completed-checkbox');
-    const filterChip = toolbar.querySelector('.filter-chip');
-    checkbox.checked = showCompleted;
-    filterChip.classList.toggle('active', showCompleted);
+    // Sync chip states without touching the search input (user may be typing)
+    const showCompletedCheckbox = toolbar.querySelector('.show-completed-checkbox');
+    const showCompletedChip = toolbar.querySelector('[data-chip="show-completed"]');
+    showCompletedCheckbox.checked = showCompleted;
+    showCompletedChip.classList.toggle('active', showCompleted);
+
+    const hideOverdueCheckbox = toolbar.querySelector('.hide-overdue-checkbox');
+    const hideOverdueChip = toolbar.querySelector('[data-chip="hide-overdue"]');
+    hideOverdueCheckbox.checked = hideOverdue;
+    hideOverdueChip.classList.toggle('active', hideOverdue);
   }
 
   // Remove previous table section before rebuilding
   container.querySelectorAll('.table-wrap, .empty-state, .table-footer').forEach(el => el.remove());
 
   // ── Filter & sort data ────────────────────────────────────────────────────────
+  const now = new Date();
   let rows = assignments;
   if (!showCompleted) rows = rows.filter(a => !a.completed_local);
+  if (hideOverdue) rows = rows.filter(a => !a.due_at || new Date(a.due_at) >= now);
 
   if (filterText.trim()) {
     const q = filterText.toLowerCase();

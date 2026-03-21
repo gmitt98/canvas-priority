@@ -15,6 +15,7 @@ export function renderCalendarView(container, options = {}) {
     weekStart = getWeekStart(new Date()),
     selectedDate = null,
     showCompleted = false,
+    hideOverdue = false,
     handlers = {},
   } = options;
 
@@ -36,9 +37,13 @@ export function renderCalendarView(container, options = {}) {
       ${_isCurrentPeriod(weekStart, todayStr) ? '' : `<button class="today-btn">Today</button>`}
     </div>
     <div class="cal-nav-right">
-      <label class="filter-chip ${showCompleted ? 'active' : ''}">
+      <label class="filter-chip ${showCompleted ? 'active' : ''}" data-chip="show-completed">
         <input type="checkbox" class="show-completed-checkbox" ${showCompleted ? 'checked' : ''} />
         Show completed
+      </label>
+      <label class="filter-chip ${hideOverdue ? 'active' : ''}" data-chip="hide-overdue">
+        <input type="checkbox" class="hide-overdue-checkbox" ${hideOverdue ? 'checked' : ''} />
+        Hide overdue
       </label>
     </div>
     <button class="cal-nav-btn next-week-btn" aria-label="Next 4 weeks">
@@ -62,17 +67,26 @@ export function renderCalendarView(container, options = {}) {
   });
 
   const showCompletedCheckbox = nav.querySelector('.show-completed-checkbox');
-  const filterChip = nav.querySelector('.filter-chip');
+  const showCompletedChip = nav.querySelector('[data-chip="show-completed"]');
   showCompletedCheckbox?.addEventListener('change', (e) => {
-    filterChip.classList.toggle('active', e.target.checked);
+    showCompletedChip.classList.toggle('active', e.target.checked);
     if (handlers.onShowCompletedChange) handlers.onShowCompletedChange(e.target.checked);
   });
 
+  const hideOverdueCheckbox = nav.querySelector('.hide-overdue-checkbox');
+  const hideOverdueChip = nav.querySelector('[data-chip="hide-overdue"]');
+  hideOverdueCheckbox?.addEventListener('change', (e) => {
+    hideOverdueChip.classList.toggle('active', e.target.checked);
+    if (handlers.onHideOverdueChange) handlers.onHideOverdueChange(e.target.checked);
+  });
+
   // ── Build date → assignments map ──────────────────────────────────────────────
+  const now = new Date();
   const byDate = {};
   for (const a of assignments) {
     if (!a.due_at) continue;
     if (a.completed_local && !showCompleted) continue;
+    if (hideOverdue && new Date(a.due_at) < now) continue;
     const d = toDateString(new Date(a.due_at));
     if (!byDate[d]) byDate[d] = [];
     byDate[d].push(a);

@@ -23,6 +23,7 @@ let state = {
   },
   sortDir: 'desc',
   filterText: '',
+  hideOverdue: false,
   calendarWeekStart: getWeekStart(new Date()),
   selectedDate: null,
   isSyncing: false,
@@ -196,6 +197,7 @@ function renderAll() {
       sortBy: state.uiState.list_sort,
       sortDir: state.sortDir,
       showCompleted: state.uiState.show_completed,
+      hideOverdue: state.hideOverdue,
       filterText: state.filterText,
       handlers: {
         onComplete: handleComplete,
@@ -211,6 +213,10 @@ function renderAll() {
           storage.updateUIState({ show_completed: show });
           renderAll();
         },
+        onHideOverdueChange: (hide) => {
+          state.hideOverdue = hide;
+          renderAll();
+        },
         onSearchChange: (text) => {
           state.filterText = text;
           renderAll();
@@ -224,6 +230,7 @@ function renderAll() {
       weekStart: state.calendarWeekStart,
       selectedDate: state.selectedDate,
       showCompleted: state.uiState.show_completed,
+      hideOverdue: state.hideOverdue,
       handlers: {
         onDateSelect: (dateStr) => {
           state.selectedDate = state.selectedDate === dateStr ? null : dateStr;
@@ -237,6 +244,10 @@ function renderAll() {
         onShowCompletedChange: (show) => {
           state.uiState.show_completed = show;
           storage.updateUIState({ show_completed: show });
+          renderAll();
+        },
+        onHideOverdueChange: (hide) => {
+          state.hideOverdue = hide;
           renderAll();
         },
         onAssignmentClick: (assignment) => {
