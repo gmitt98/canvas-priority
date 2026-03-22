@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Canvas Priority</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 720px;
+      margin: 60px auto;
+      padding: 0 24px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #1a1a2e;
+    }
+    h1 { font-size: 2rem; margin-bottom: 4px; color: #4f6ef7; }
+    .subtitle { color: #666; margin-bottom: 40px; font-size: 0.95rem; }
+    h2 { font-size: 1.2rem; margin-top: 36px; margin-bottom: 8px; }
+    p, li { color: #333; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    .highlight {
+      background: #eef1fe;
+      border-left: 4px solid #4f6ef7;
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+    footer { margin-top: 60px; font-size: 0.85rem; color: #999; border-top: 1px solid #eee; padding-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>Privacy Policy</h1>
+  <p class="subtitle">Canvas Priority Chrome Extension &mdash; Last updated March 2026</p>
+
+  <div class="highlight">
+    <strong>Short version:</strong> Canvas Priority stores your Canvas API token and assignment data
+    locally on your device only. Nothing is sent to our servers — because we don't have any.
+  </div>
+
+  <h2>What data does Canvas Priority collect?</h2>
+  <p>Canvas Priority reads the following data from your school's Canvas account:</p>
+  <ul>
+    <li>Your enrolled courses</li>
+    <li>Assignments and their due dates, point values, and submission status</li>
+    <li>Your current grades per course</li>
+  </ul>
+  <p>To access this data, you provide a Canvas API token — a key generated from your own
+  Canvas account settings. This token is stored locally in your browser using Chrome's
+  built-in storage API (<code>chrome.storage.local</code>).</p>
+
+  <h2>Where is my data stored?</h2>
+  <p>All data — your API token, your assignment list, your priority scores, and any
+  preferences you set — is stored <strong>only on your device</strong>, inside Chrome's
+  sandboxed extension storage. It never leaves your computer.</p>
+
+  <h2>Is my data shared with anyone?</h2>
+  <p><strong>No.</strong> Canvas Priority does not have backend servers, analytics services,
+  crash reporting, advertising networks, or any third-party integrations. The extension
+  communicates with exactly two systems:</p>
+  <ul>
+    <li>Your school's Canvas instance (on <code>instructure.com</code>) — to fetch your assignments</li>
+    <li>Chrome's local storage API — to save data on your device</li>
+  </ul>
+
+  <h2>Does Canvas Priority track my browsing?</h2>
+  <p>No. The extension does not monitor any websites you visit and does not inject code
+  into web pages. It only runs its own popup and dashboard pages.</p>
+
+  <h2>How do I delete my data?</h2>
+  <p>Uninstalling the extension removes all stored data immediately. You can also clear
+  data manually from Chrome's extension storage settings.</p>
+  <p>You should also revoke your Canvas API token from your Canvas account settings
+  (Account &rarr; Settings &rarr; Approved Integrations) so it can no longer be used.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If this policy changes in a meaningful way, the update will be noted in the
+  extension's release notes on the Chrome Web Store.</p>
+
+  <h2>Contact</h2>
+  <p>Questions? Open an issue on
+  <a href="https://github.com/gmitt98/canvas-priority">github.com/gmitt98/canvas-priority</a>.</p>
+
+  <footer>
+    Canvas Priority is open-source software released under the MIT License.
+    It is not affiliated with Instructure, Inc. or the Canvas LMS product.
+  </footer>
+
+</body>
+</html>
