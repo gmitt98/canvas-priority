@@ -31,6 +31,7 @@
       </div>
       <div class="header-right">
         <div id="sync-indicator-container"></div>
+        <button class="btn btn-ghost settings-btn" id="settings-btn" aria-label="Settings">⚙</button>
       </div>
     </header>
 
@@ -48,6 +49,39 @@
         <div id="calendar-container"></div>
       </section>
     </main>
+
+    <!-- ── Settings modal ─────────────────────────────────────────────── -->
+    <div id="settings-modal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+      <div class="modal-content">
+        <h2 id="settings-modal-title">Settings</h2>
+
+        <div class="settings-section">
+          <div class="settings-label">Canvas connection</div>
+          <div class="settings-row">
+            <span class="settings-field-label">School</span>
+            <span class="settings-value" id="settings-domain">—</span>
+          </div>
+          <div class="settings-row">
+            <span class="settings-field-label">Token</span>
+            <span class="settings-value token-preview" id="settings-token">—</span>
+          </div>
+        </div>
+
+        <div class="settings-warning">
+          <strong>⚠ About your Canvas token</strong><br />
+          Canvas API tokens grant read <em>and write</em> access to your Canvas account —
+          they can submit assignments, send messages, and change grades on your behalf.
+          Canvas Priority only reads your data and never writes anything, but you should
+          treat this token like a password and revoke it if you no longer use this extension.
+        </div>
+
+        <div class="modal-actions settings-actions">
+          <button class="btn btn-secondary" id="settings-close-btn">Close</button>
+          <button class="btn btn-secondary" id="settings-update-btn">Update connection</button>
+          <button class="btn btn-danger" id="settings-disconnect-btn">Disconnect &amp; delete data</button>
+        </div>
+      </div>
+    </div>
 
     <!-- ── Override modal ──────────────────────────────────────────────── -->
     <div id="override-modal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="override-modal-title">

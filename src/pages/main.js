@@ -46,6 +46,14 @@ const overrideSaveBtn = document.getElementById('override-save-btn');
 const overrideCancelBtn = document.getElementById('override-cancel-btn');
 const overrideClearBtn = document.getElementById('override-clear-btn');
 
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const settingsCloseBtn = document.getElementById('settings-close-btn');
+const settingsUpdateBtn = document.getElementById('settings-update-btn');
+const settingsDisconnectBtn = document.getElementById('settings-disconnect-btn');
+const settingsDomain = document.getElementById('settings-domain');
+const settingsToken = document.getElementById('settings-token');
+
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   await storage.initialize();
@@ -178,12 +186,44 @@ overrideModal.addEventListener('click', (e) => {
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !overrideModal.hidden) closeOverrideModal();
+  if (e.key === 'Escape') {
+    if (!overrideModal.hidden) closeOverrideModal();
+    if (!settingsModal.hidden) closeSettingsModal();
+  }
 });
 
 function closeOverrideModal() {
   overrideModal.hidden = true;
   state.overrideAssignmentId = null;
+}
+
+// ── Settings modal ────────────────────────────────────────────────────────────
+settingsBtn.addEventListener('click', openSettingsModal);
+settingsCloseBtn.addEventListener('click', closeSettingsModal);
+settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
+
+settingsUpdateBtn.addEventListener('click', () => {
+  window.location.href = chrome.runtime.getURL('src/pages/onboarding.html');
+});
+
+settingsDisconnectBtn.addEventListener('click', async () => {
+  if (!confirm('This will delete your Canvas token and all synced assignment data from this browser. Continue?')) return;
+  await storage.clear();
+  window.location.href = chrome.runtime.getURL('src/pages/onboarding.html');
+});
+
+async function openSettingsModal() {
+  const config = await storage.getConfig();
+  settingsDomain.textContent = config.canvas_domain || '—';
+  const token = config.canvas_token || '';
+  settingsToken.textContent = token
+    ? '••••••••' + token.slice(-4)
+    : '—';
+  settingsModal.hidden = false;
+}
+
+function closeSettingsModal() {
+  settingsModal.hidden = true;
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────

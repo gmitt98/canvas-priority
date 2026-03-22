@@ -41,9 +41,51 @@ Canvas Priority imports your assignments from Canvas and ranks them using a thre
 - Click **Override** to set a custom priority score
 - Click **↻** to refresh from Canvas
 
+## Security & Your Canvas Token
+
+### What your token can do
+
+Canvas API tokens grant **full read and write access** to your Canvas account. With a valid token, an application could submit assignments, send messages, change grades, and access all your course content — not just read it.
+
+**Canvas Priority only reads data.** It fetches your courses, assignments, and grades. It never submits anything, never sends messages, and never modifies your Canvas account in any way. You can verify this in the source code: all API calls are `GET` requests.
+
+That said, you should treat your Canvas token like a password:
+
+- Do not share it with anyone
+- Do not paste it into other tools or websites without understanding what they do with it
+- Revoke it when you no longer use Canvas Priority
+
+### How to disconnect
+
+**From within the extension:**
+1. Open Canvas Priority
+2. Click the **⚙** icon in the top-right corner
+3. Click **Disconnect & delete data**
+
+This removes your token and all synced assignment data from your browser immediately.
+
+**Revoke the token from Canvas** (recommended after disconnecting):
+1. Log into Canvas
+2. Account → Settings → Approved Integrations
+3. Find the Canvas Priority token → click **Revoke**
+
+Revoking the token from Canvas ensures it cannot be used by anything, even if it were somehow still present on a device.
+
+### What data is stored
+
+Everything is stored locally using Chrome's `chrome.storage.local` API — the sandboxed storage built into Chrome for extensions. Nothing is stored on external servers.
+
+Stored locally:
+- Your Canvas API token
+- Your Canvas domain (e.g. `school.instructure.com`)
+- Your synced courses and assignments
+- Your local preferences (sort order, completed/hidden items, priority overrides)
+
+To verify: open Chrome DevTools on any extension page → Application → Storage → Extension Storage.
+
 ## Privacy
 
-All data is stored locally in Chrome's browser storage. No data is sent to any external server.
+All data is stored locally in Chrome's browser storage. No data is sent to any external server. See the [full privacy policy](https://gmitt98.github.io/canvas-priority/privacy).
 
 ## File Structure
 

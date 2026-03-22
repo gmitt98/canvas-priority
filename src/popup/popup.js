@@ -141,4 +141,8 @@ setupBtn?.addEventListener('click', () => {
   chrome.tabs.create({ url: chrome.runtime.getURL('src/pages/onboarding.html') });
 });
 
+document.getElementById('settings-link-btn')?.addEventListener('click', () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL('src/pages/main.html') });
+});
+
 init();
