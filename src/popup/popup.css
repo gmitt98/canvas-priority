@@ -32,6 +32,13 @@ body {
 
 .popup-logo { width: 16px; height: 16px; }
 
+.refresh-btn,
+.settings-link-btn {
+  font-size: 22px;
+  padding: 2px 8px;
+  line-height: 1;
+}
+
 .popup-title {
   font-size: var(--font-size-base);
   font-weight: 700;
